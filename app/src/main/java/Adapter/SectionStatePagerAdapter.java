@@ -13,11 +13,12 @@ import com.bilkent.subfly.getout.FragmentCreate;
 import com.bilkent.subfly.getout.FragmentMain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SectionStatePagerAdapter extends FragmentPagerAdapter {
 
     //Variables
-    private ArrayList<Fragment> pages;
+    private List<Fragment> pages;
 
     public SectionStatePagerAdapter(FragmentManager fm) {
         //Initialization

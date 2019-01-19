@@ -1,5 +1,8 @@
 package Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Muhammed Naci Dalkıran and Sena Korkut
  * @version  18.12.2018
@@ -10,10 +13,10 @@ public class User {
     //Properties
     private String name;
     private String email;
-    private Event event;
-    private EventList attendingEvents;
-    private EventList createdEvent;
-    private String password;
+//    private Event event;
+    private List<Event> attending_events = new ArrayList<Event>();
+    private List<Event> created_events = new ArrayList<Event>();
+//    private String password;
 
     /**
      * This is a empty constructor
@@ -27,30 +30,30 @@ public class User {
      * @param email
      */
     public User(String email){
-        setName(email);
+        nameConverter(email);
         this.email = email;
-        attendingEvents = new EventList();
-        createdEvent = new EventList();
+        attending_events = new ArrayList<Event>();
+        created_events = new ArrayList<Event>();
     }
 
-    /**
-     * This is contractor method of this class
-     * @param email is a email address of user.
-     */
-    public User( String email, String password ) {
-        this.email = email;
-        setName( email );
-        attendingEvents = new EventList();
-        createdEvent = new EventList();
-        this.password = password;
-    }
+//    /**
+//     * This is contractor method of this class
+//     * @param email is a email address of user.
+//     */
+//    public User( String email, String password ) {
+//        this.email = email;
+//        nameConverter( email );
+//        attending_events = new ArrayList<Event>();
+//        created_events = new ArrayList<Event>();
+//        this.password = password;
+//    }
 
     /**
      * This method adds event to attending Event.
      * @param event is a event user went.
      */
     public void addAttendingEvent( String id, Event event ) {
-        this.attendingEvents.add( event );
+        this.attending_events.add( event );
     }
 
     /**
@@ -58,7 +61,7 @@ public class User {
      * @param event is dropped event by user.
      */
     public void removeAttendingEvent( Event event ){
-        this.attendingEvents.remove( event );
+        this.attending_events.remove( event );
     }
     /**
      * This method calculates and returns rateGame for pieChart.
@@ -66,12 +69,12 @@ public class User {
      */
     public float pieChart( String type ){
         //Properties
-        EventList eventList;
+        List<Event> eventList;
         float counter;
         //Program Code
-        eventList = new EventList();
-        eventList.addAll(attendingEvents);
-        eventList.addAll(attendingEvents.size(),createdEvent);
+        eventList = new ArrayList<Event>();
+        eventList.addAll(attending_events);
+        eventList.addAll(attending_events.size(),created_events);
         counter = 0;
         for( int i = 0 ; i < eventList.size(); i ++){
             System.out.println("--------------------------------------------------");
@@ -106,41 +109,49 @@ public class User {
      * This is setter method of name
      * @param email is a email address of user.
      */
-    private void setName( String email ){
-        name = "";
-        name += email.substring( 0 , 1 ).toUpperCase( ) + email.substring( 1 , email.indexOf( '.' )) + " " + email.substring(email.indexOf( '.' )+ 1 , email.indexOf( '.' ) + 2 ).toUpperCase( ) + email.substring( email.indexOf( '.' ) + 2 , email.indexOf( '@' ) );
+    private void nameConverter( String email ){
+        try
+        {
+            name = "";
+            name += email.substring( 0 , 1 ).toUpperCase( ) + email.substring( 1 , email.indexOf( '.' )) + " " + email.substring(email.indexOf( '.' )+ 1 , email.indexOf( '.' ) + 2 ).toUpperCase( ) + email.substring( email.indexOf( '.' ) + 2 , email.indexOf( '@' ) );
+        }
+        catch( Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
-    /**
-     * This is getter method of event.
-     * @return even of user.
-     */
-    public Event getEvent( ) {
-        return event;
-    }
+//    /**
+//     * This is getter method of event.
+//     * @return even of user.
+//     */
+//    public Event getEvent( ) {
+//        return event;
+//    }
 
     /**
      * This is setter method of created event.
-     * @param createdEvent is created by user.
+     * @param created_events is created by user.
      */
-    public void setCreatedEvent( EventList createdEvent ) {
-        this.createdEvent = createdEvent;
+    public void setCreated_events( List<Event> created_events ) {
+        this.created_events = created_events;
     }
 
     /**
      * This is getter method of attending events
      * @return attending event of user.
      */
-    public EventList getAttendingEvents( ) {
-        return attendingEvents;
+    public List<Event> getAttending_events( ) {
+        return attending_events;
     }
 
     /**
-     * This is getter method of createdEvent.
+     * This is getter method of created_events.
      * @return event created by user.
      */
-    public EventList getCreatedEvent( ) {
-        return createdEvent;
+    public List<Event> getCreated_events( ) {
+        return created_events;
     }
 
 
@@ -148,10 +159,10 @@ public class User {
 
     /**
      * This is setter event of attending events.
-     * @param attendingEvents is list of attending event.
+     * @param attending_events is list of attending event.
      */
-    public void setAttendingEvents(EventList attendingEvents) {
-        this.attendingEvents = attendingEvents;
+    public void setAttending_events(List<Event> attending_events) {
+        this.attending_events = attending_events;
     }
 
     /**
@@ -162,20 +173,23 @@ public class User {
         return name;
     }
 
-    public String getPassword() {
-        return password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
-    }
+//    public void setEvent(Event event) {
+//        this.event = event;
+//    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }

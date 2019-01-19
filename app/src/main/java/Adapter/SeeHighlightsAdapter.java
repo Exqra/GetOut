@@ -12,14 +12,16 @@ import android.widget.TextView;
 import com.bilkent.subfly.getout.DetailsActivity;
 import com.bilkent.subfly.getout.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Model.Event;
-import Model.EventList;
 
 public class SeeHighlightsAdapter extends RecyclerView.Adapter<SeeHighlightsAdapter.SeeHighlightsViewHolder>{
     private Context context;
-    private EventList eventsLists;
+    private List<Event> eventsLists;
 
-    public SeeHighlightsAdapter(Context context, EventList eventsLists){
+    public SeeHighlightsAdapter(Context context, List<Event> eventsLists){
         this.context = context;
         this.eventsLists = eventsLists;
     }

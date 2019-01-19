@@ -32,10 +32,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Adapter.SeeEventsAdapter;
 import Model.Event;
-import Model.EventList;
 import Model.User;
 
 public class ProfileController extends AppCompatActivity {
@@ -46,15 +46,15 @@ public class ProfileController extends AppCompatActivity {
     private RecyclerView createdEvents;
     private TextView attendingText;
     private TextView createdText;
-    private EventList eventList;
-    private  EventList allEvent;
+    private List<Event> eventList;
+    private  List<Event> allEvent;
     private PieChart pieChart;
     private Toolbar toolbar;
     private StorageReference mStorage;
     private DatabaseReference databaseReference;
     private Button logout;
 
-    private EventList createdList;
+    private List<Event> createdList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,9 +72,9 @@ public class ProfileController extends AppCompatActivity {
         logout = findViewById(R.id.logoutbutton);
         userPhoto = findViewById(R.id.userPhotoID);
         mStorage = FirebaseStorage.getInstance().getReference();
-        eventList = new EventList();
-        allEvent = new EventList();
-        createdList = new EventList();
+        eventList = new ArrayList<Event>();
+        allEvent = new ArrayList<Event>();
+        createdList = new ArrayList<Event>();
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +92,7 @@ public class ProfileController extends AppCompatActivity {
      */
     private void createPieChart(PieChart pieChart, User user) {
         pieChart.setUsePercentValues(true);
-        ArrayList<PieEntry> entries = new ArrayList<>();
+        List<PieEntry> entries = new ArrayList<>();
         if (user.pieChart("sport_events") != 0)
             entries.add(new PieEntry((float) user.pieChart("sport_events"), "Sports"));
         if (user.pieChart("meal_events") != 0)
@@ -139,7 +139,7 @@ public class ProfileController extends AppCompatActivity {
                 attendingEvents.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 SeeEventsAdapter attendingAdapter = new SeeEventsAdapter(getApplicationContext(), eventList);
                 attendingEvents.setAdapter(attendingAdapter);
-                user1.setAttendingEvents(eventList);
+                user1.setAttending_events(eventList);
                 createPieChart(pieChart,user1);
             }
 
@@ -163,7 +163,7 @@ public class ProfileController extends AppCompatActivity {
                 createdEvents.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 SeeEventsAdapter createdAdapter = new SeeEventsAdapter(getApplicationContext(), allEvent);
                 createdEvents.setAdapter(createdAdapter);
-                user1.setCreatedEvent(allEvent);
+                user1.setCreated_events(allEvent);
                 createPieChart(pieChart,user1);
             }
             @Override

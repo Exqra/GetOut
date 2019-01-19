@@ -24,11 +24,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Adapter.SeeEventsAdapter;
 import Adapter.SeeHighlightsAdapter;
 import Model.Event;
 import Model.EventManager;
-import Model.EventList;
 
 public class FragmentMain extends Fragment {
 
@@ -42,7 +44,7 @@ public class FragmentMain extends Fragment {
     private Button create;
     private Button profile;
     private Button categories;
-    private EventList eventList;
+    // private EventList eventList;
     private SeeEventsAdapter adapter1;
     private SeeHighlightsAdapter adapter2;
     private EventManager topFiveManager;
@@ -58,7 +60,6 @@ public class FragmentMain extends Fragment {
         //Initialization
         View view = inflater.inflate(R.layout.fragment_layout_main, container, false);
         highlight = (RecyclerView) view.findViewById(R.id.highlight);
-        eventList = new EventList();
 
         //Firebase init...
         databaseReference = FirebaseDatabase.getInstance().getReference("events");
@@ -147,29 +148,32 @@ public class FragmentMain extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("events");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                eventList.clear();
+                ArrayList<Event> eventList = new ArrayList<Event>();
                 Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                for (DataSnapshot snapshot : children){
+                for (DataSnapshot snapshot : children) {
                     Iterable<DataSnapshot> childrenOfChildren = snapshot.getChildren();
-                    for(DataSnapshot snapshot1 : childrenOfChildren){
-                        eventList.add(snapshot1.getValue(Event.class));
+                    for (DataSnapshot snapshot1 : childrenOfChildren) {
+                        Event temp = snapshot1.getValue(Event.class);
+                        eventList.add( temp);
                     }
                 }
                 topFiveManager = new EventManager(eventList);
                 runOutOfParticipantsManager = new EventManager(eventList);
-                EventList runOutOfParticipants = runOutOfParticipantsManager.getRunOutOfParticipant();
+                List<Event> runOutOfParticipants = runOutOfParticipantsManager.getRunOutOfParticipant();
                 adapter1 = new SeeEventsAdapter(getActivity(), runOutOfParticipants);
                 recyclerView.setAdapter(adapter1);
                 highlightAnimation();
-                EventList topFive = topFiveManager.getTopFive();
+                List<Event> topFive = topFiveManager.getTopFive();
                 adapter2 = new SeeHighlightsAdapter(getActivity(), topFive);
                 highlight.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
                 highlight.setAdapter(adapter2);
                 highlight.setNestedScrollingEnabled(false);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 //Do Nothing...

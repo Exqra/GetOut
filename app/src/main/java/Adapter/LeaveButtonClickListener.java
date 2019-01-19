@@ -1,10 +1,14 @@
 package Adapter;
 
 
+import android.content.Intent;
 import android.view.View;
 
+import android.widget.Button;
 import android.widget.TextView;
 
+
+import com.bilkent.subfly.getout.MainActivity;
 
 import Model.EventManager;
 
@@ -17,11 +21,14 @@ public class LeaveButtonClickListener implements View.OnClickListener {
 
     private EventManager eventManager;
     private TextView participants;
+    Button leave;
+    Button join;
 
-
-    public LeaveButtonClickListener(EventManager eventManager, TextView participants) {
+    public LeaveButtonClickListener(EventManager eventManager, TextView participants, Button leave, Button join) {
         this.eventManager = eventManager;
         this.participants = participants;
+        this.leave = leave;
+        this.join = join;
     }
 
     @Override
@@ -31,6 +38,13 @@ public class LeaveButtonClickListener implements View.OnClickListener {
             String current = text.substring(0, text.indexOf('/'));
             String all = text.substring(text.indexOf('/') + 1, text.length());
             participants.setText((Integer.parseInt(current) - 1 ) + "/" + all);
+
+            /**
+             * Added by Tolga Catalpinar 19.01.2019
+             */
+            leave.setVisibility( View.INVISIBLE);
+            join.setVisibility( View.VISIBLE);
+            join.setOnClickListener( new JoinButtonClickListener( eventManager, participants, leave, join));
         }
     }
 }

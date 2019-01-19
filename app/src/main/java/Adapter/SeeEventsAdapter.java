@@ -13,15 +13,17 @@ import com.bilkent.subfly.getout.DetailsActivity;
 import com.bilkent.subfly.getout.R;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Model.Event;
-import Model.EventList;
 
 public class SeeEventsAdapter extends RecyclerView.Adapter<SeeEventsAdapter.SeeEventsViewHolder> {
 
     private Context context;
-    private EventList eventsLists;
+    private List<Event> eventsLists;
 
-    public SeeEventsAdapter(Context context, EventList eventsLists){
+    public SeeEventsAdapter(Context context, List<Event> eventsLists){
         this.context = context;
         this.eventsLists = eventsLists;
     }

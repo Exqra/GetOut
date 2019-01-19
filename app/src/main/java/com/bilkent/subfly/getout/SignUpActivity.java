@@ -187,9 +187,10 @@ public class SignUpActivity extends AppCompatActivity {
                                                                     Log.d(TAG, "The User is created");
                                                                     FirebaseUser user = mAuth.getCurrentUser();
                                                                     // Add user to the database
-                                                                    User newUser = new User(newMail.getText().toString(), password.getText().toString());
+//                                                                    User newUser = new User(newMail.getText().toString(), password.getText().toString());
+                                                                    User newUser = new User(newMail.getText().toString());
                                                                     userReference.child(newUser.getName()).setValue(newUser);
-                                                                    userReference.child(newUser.getName()).child("password").setValue(password.getText().toString());
+//                                                                    userReference.child(newUser.getName()).child("password").setValue(password.getText().toString());
                                                                     Intent intent = new Intent(getApplication(), LoginActivity.class);
                                                                     startActivity(intent);
                                                                 } else {

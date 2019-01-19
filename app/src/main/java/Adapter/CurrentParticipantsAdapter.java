@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.bilkent.subfly.getout.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Model.User;
 
@@ -17,10 +18,10 @@ import Model.User;
 public class CurrentParticipantsAdapter extends RecyclerView.Adapter<CurrentParticipantsAdapter.CurrentParticipantsViewHolder>{
 
     private Context context;
-    private ArrayList<User> userList;
+    private List<String> userList;
 
 
-    public CurrentParticipantsAdapter(Context context, ArrayList<User> userList){
+    public CurrentParticipantsAdapter(Context context, List<String> userList){
         this.context = context;
         this.userList = userList;
     }
@@ -34,7 +35,7 @@ public class CurrentParticipantsAdapter extends RecyclerView.Adapter<CurrentPart
     public void onBindViewHolder(CurrentParticipantsViewHolder currentParticipantsViewHolder, int i) {
 
 
-        currentParticipantsViewHolder.name1.setText(userList.get(i).getName());
+        currentParticipantsViewHolder.name1.setText(userList.get(i));
             // Picasso.get().load(user1.getPhoto()).into(currentParticipantsViewHolder.photo);
             // Picasso.get().load(user2.getPhoto()).into(currentParticipantsViewHolder.pic2);
         }

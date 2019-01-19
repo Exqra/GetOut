@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -111,12 +112,16 @@ public class EditActivity extends AppCompatActivity {
             date.setText(extras.getString("date"));
             numberOfParticipants.setText(extras.getString("personNumber"));
             placePlaceHolder.setText(extras.getString("location"));
+            // Added by Tolga 18.01.2019
+            numberOfParticipants.setText(extras.getString("numberOfParticipants")); // bu da olmuyo
+//            type.setAdapter(extras.getS); // Ne yazcam??
         }
 
         //Firebase init for user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String dummyMail = user.getEmail();
-        final User dummyUser = new User(dummyMail);
+        String email = user.getEmail();
+        final String user_name = email.substring( 0 , 1 ).toUpperCase( ) + email.substring( 1 , email.indexOf( '.' )) + " " + email.substring(email.indexOf( '.' )+ 1 , email.indexOf( '.' ) + 2 ).toUpperCase( ) + email.substring( email.indexOf( '.' ) + 2 , email.indexOf( '@' ) );
+
 
         //For spinner (dropdown menu) on create part
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.event_types));
@@ -170,51 +175,51 @@ public class EditActivity extends AppCompatActivity {
                             event = new MealEvent(eventNamePlaceHolder.getText().toString(), placePlaceHolder.getText().toString(), date.getText().toString(), time.getText().toString(), Integer.parseInt(numberOfParticipants.getText().toString()), descriptionPlaceHolder.getText().toString(), nameOfUser);
                             break;
                     }
-                    final DatabaseReference newEventRef = databaseEvents.child(event.getType());
-                    newEventRef.addValueEventListener(new ValueEventListener() {
+                    /**
+                     * Edited by Tolga Catalpinar 19.01.2019
+                     */
+                    System.out.println( "Event's title: " + event.getTitle() + " and event's user_list's size: " + event.getUser_list().size());
+                    // Add the userlist of event from firebase to the new event
+                    FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                            for(DataSnapshot sh:children){
-                                Event temp = sh.getValue(Event.class);
-                                if(temp.getTitle().equals(title) && temp.getDescription().equals(desc)){
-                                    sh.getRef().removeValue();
+                            DataSnapshot event_type = dataSnapshot.child( "events").child( event.getType());
+                            Iterable< DataSnapshot> children = event_type.getChildren();
+                            for( DataSnapshot child : children)
+                            {
+                                if( child.getValue(Event.class).getTitle().equals( event.getTitle()))
+                                {
+                                    // Get the userList
+                                    event.setUser_list( child.getValue(Event.class).getUser_list());
+                                    event.setRateOfParticipants();
+                                    event.setNumberOfCurrentParticipants( event.getUser_list().size() + 1);
+                                    // Edit event
+                                    child.getRef().setValue(event);
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            //Do nothing...
-                        }
-                    });
-                    DatabaseReference deletedRef = userRef.child(dummyUser.getName()).child("created_events");
-                    deletedRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                            for(DataSnapshot sh : children){
-                                Event temp = sh.getValue(Event.class);
-                                if(temp.getTitle().equals(title) && temp.getDescription().equals(desc)){
-                                    sh.getRef().removeValue();
+                            // Update creator
+                            DataSnapshot created_events = dataSnapshot.child( "users").child(nameOfUser).child("created_events");
+                            children = created_events.getChildren();
+                            for( DataSnapshot child : children)
+                            {
+                                if( child.getValue(Event.class).getUserName().equals( nameOfUser))
+                                {
+                                    child.getRef().setValue( event);
                                 }
                             }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            //Do nothing...
-                        }
-                    });
-                    userRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Iterable<DataSnapshot> users = dataSnapshot.getChildren();
-                            for(DataSnapshot user : users){
-                                Iterable<DataSnapshot> events = user.child("attending_events").getChildren();
-                                for(DataSnapshot event : events){
-                                    Event temp = event.getValue(Event.class);
-                                    if(temp.getTitle().equals(title) && temp.getDescription().equals(desc)){
-                                        event.getRef().removeValue();
+
+                            // Update attenders
+                            ArrayList<String> userList = event.getUser_list();
+                            for( int i = 0; i < userList.size(); i ++)
+                            {
+                                DataSnapshot attending_events = dataSnapshot.child("users").child(userList.get(i)).child("attending_events");
+                                children = attending_events.getChildren();
+                                for( DataSnapshot child : children)
+                                {
+                                    if( child.getValue(Event.class).getTitle().equals( event.getTitle()))
+                                    {
+                                        child.getRef().setValue( event);
                                     }
                                 }
                             }
@@ -225,12 +230,70 @@ public class EditActivity extends AppCompatActivity {
 
                         }
                     });
-                    databaseEvents.child(event.getType()).child(event.getTitle()).setValue(event);
-                    databaseEvents.child(event.getType()).child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
-                    databaseEvents.child(event.getType()).child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
-                    DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
-                    databaseUsers.child(nameOfUser).child("created_events").push().setValue(event);
-                    userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
+                    // Edit event
+//                    final DatabaseReference newEventRef = databaseEvents.child(event.getType());
+//                    newEventRef.addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+//                            for(DataSnapshot sh:children){
+//                                Event temp = sh.getValue(Event.class);
+//                                if(temp.getTitle().equals(title)){
+//                                    sh.getRef().setValue( event);
+//                                }
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//                            //Do nothing...
+//                        }
+//                    });
+
+                    // Edit creator
+//                    DatabaseReference created_events = userRef.child(user_name).child("created_events");
+//                    created_events.addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+//                            for(DataSnapshot sh : children){
+//                                Event temp = sh.getValue(Event.class);
+//                                if(temp.getTitle().equals(title)){
+//                                    sh.getRef().setValue( event);
+//                                }
+//                            }
+//                        }
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//                            //Do nothing...
+//                        }
+//                    });
+//                    userRef.addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            Iterable<DataSnapshot> users = dataSnapshot.getChildren();
+//                            for(DataSnapshot user : users){
+//                                Iterable<DataSnapshot> events = user.child("attending_events").getChildren();
+//                                for(DataSnapshot event : events){
+//                                    Event temp = event.getValue(Event.class);
+//                                    if(temp.getTitle().equals(title) && temp.getDescription().equals(desc)){
+//                                        event.getRef().removeValue();
+//                                    }
+//                                }
+//                            }
+//
+//                        }
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//                    databaseEvents.child(event.getType()).child(event.getTitle()).setValue(event);
+//                    databaseEvents.child(event.getType()).child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
+//                    databaseEvents.child(event.getType()).child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
+//                    DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+//                    databaseUsers.child(nameOfUser).child("created_events").push().setValue(event);
+//                    userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     Toast.makeText(getApplicationContext(), "Event Created, Now GETOUT!", Toast.LENGTH_SHORT).show();
                     eventNamePlaceHolder.setText("");

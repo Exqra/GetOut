@@ -12,16 +12,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Adapter.SeeEventsAdapter;
 import Model.Event;
-import Model.EventList;
 import Model.EventManager;
 
 public class EventViewerActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private SeeEventsAdapter adapter1;
-    private EventList eventsList;
+    private List<Event> eventsList;
     private Bundle bundle;
     private String bundle1;
     private EventManager eventManager;
@@ -34,7 +36,7 @@ public class EventViewerActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.event_list_view);
-        eventsList = new EventList();
+        eventsList = new ArrayList<Event>();
         databaseReference = FirebaseDatabase.getInstance().getReference("events");
         bundle = getIntent().getExtras();
         bundle1 = bundle.getString("type");
@@ -55,7 +57,7 @@ public class EventViewerActivity extends AppCompatActivity {
                   }
               }
               eventManager = new EventManager(eventsList);
-              EventList a = eventManager.getEventByType(bundle1);
+              List<Event> a = eventManager.getEventByType(bundle1);
               recyclerView = findViewById(R.id.recyclerViewID);
               recyclerView.setHasFixedSize(true);
               recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

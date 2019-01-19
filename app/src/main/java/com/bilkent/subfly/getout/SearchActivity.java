@@ -12,16 +12,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Adapter.SeeEventsAdapter;
 import Model.Event;
-import Model.EventList;
 import Model.EventManager;
 
 public class SearchActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private SeeEventsAdapter adapter1;
-    private EventList eventsList;
+    private List<Event> eventsList;
     private Bundle bundle;
     private String bundle1;
     private EventManager eventManager;
@@ -32,7 +34,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_list_view);
-        eventsList = new EventList();
+        eventsList = new ArrayList<Event>();
         databaseReference = FirebaseDatabase.getInstance().getReference("events");
         bundle = getIntent().getExtras();
         bundle1 = bundle.getString("search");
@@ -67,8 +69,8 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    public EventList searchList(){
-        EventList searchList = new EventList();
+    public List<Event> searchList(){
+        List<Event> searchList = new ArrayList<Event>();
         for (int i = 0; i < eventsList.size(); i++){
             if (eventsList.get(i).getTitle().toLowerCase().contains(bundle1)){
                 searchList.add(eventsList.get(i));

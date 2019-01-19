@@ -1,4 +1,7 @@
 package Model;
+
+import java.util.ArrayList;
+
 /**
  * This class is Event class containing knowledge of events.
  * @author Sena Korkut and Muhammed Naci Dalkıran
@@ -18,13 +21,15 @@ public class Event  {
     private String description;
     private String type;
     private String userName;
-    private double rateOfParticipant;
+    private double rateOfParticipants;
+    private ArrayList<String> user_list;
+    private String key;
 
     /**
      * Empty Constructor
      */
     public Event(){
-        //Empty Constructor...
+        user_list = new ArrayList<String>();
     }
 
     /**
@@ -46,7 +51,8 @@ public class Event  {
         this.userName = userName;
         numberOfCurrentParticipants = 1;
         type = null;
-        rateOfParticipant = (double) numberOfCurrentParticipants/numberOfParticipants;
+        setRateOfParticipants();
+        user_list = new ArrayList<String>();
     }
 
 
@@ -188,15 +194,14 @@ public class Event  {
     }
 
     public double getRateOfParticipants() {
-        return rateOfParticipant;
+        return rateOfParticipants;
     }
 
     /**
      * This is a setter method of rate of participants
-     * @param rateOfParticipant is rate which is of participants.
      */
-    public void setRateOfParticipants(double rateOfParticipant) {
-        this.rateOfParticipant = rateOfParticipant;
+    public void setRateOfParticipants() {
+        this.rateOfParticipants = (double) numberOfCurrentParticipants/numberOfParticipants;
     }
 
     /**
@@ -206,4 +211,37 @@ public class Event  {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+    public void add( String user)
+    {
+        user_list.add( user);
+    }
+    public void remove( User user)
+    {
+        int index = -1;
+        for(int i = 0; i < user_list.size(); i ++)
+        {
+            if( user_list.get( i).equals( user))
+                index = i;
+        }
+        user_list.remove( index);
+    }
+
+
+    public ArrayList<String> getUser_list() {
+        return user_list;
+    }
+
+    public void setUser_list(ArrayList<String> user_list) {
+        this.user_list = user_list;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+
 }

@@ -25,8 +25,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.text.SimpleDateFormat;
@@ -107,12 +110,7 @@ public class FragmentCreate extends Fragment {
         create = (Button) view.findViewById(R.id.save);
         discard = (Button) view.findViewById(R.id.discard);
 
-        //Firebase init for user
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String dummyMail = user.getEmail();
-        final User dummyUser = new User(dummyMail);
 
-        //For spinner (dropdown menu) on create part
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.event_types));
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         type.setAdapter(adapter);
@@ -137,51 +135,55 @@ public class FragmentCreate extends Fragment {
         });
 
         //Create button listener
+        /**
+         * Edited by Tolga Catalpinar 19.01.2019
+         */
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String email = user.getEmail();
-                String nameOfUser = email.substring( 0 , 1 ).toUpperCase( ) + email.substring( 1 , email.indexOf( '.' )) + " " + email.substring(email.indexOf( '.' )+ 1 , email.indexOf( '.' ) + 2 ).toUpperCase( ) + email.substring( email.indexOf( '.' ) + 2 , email.indexOf( '@' ) );
+                final String nameOfUser = email.substring( 0 , 1 ).toUpperCase( ) + email.substring( 1 , email.indexOf( '.' )) + " " + email.substring(email.indexOf( '.' )+ 1 , email.indexOf( '.' ) + 2 ).toUpperCase( ) + email.substring( email.indexOf( '.' ) + 2 , email.indexOf( '@' ) );
                 try{
                     String eventType = type.getSelectedItem().toString();
                     switch (eventType){
                         case "Sport":
                             event = new SportEvent(eventNamePlaceHolder.getText().toString(), placePlaceHolder.getText().toString(), date.getText().toString(), time.getText().toString(), Integer.parseInt(numberOfParticipants.getText().toString()), descriptionPlaceHolder.getText().toString(), nameOfUser);
-                            sportEvents.child(event.getTitle()).setValue(event);
-                            sportEvents.child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
-                            sportEvents.child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
-                            userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
+                            sportEvents.push().setValue( event);
                             break;
                         case "Transportation":
                             event = new TransportationEvent(eventNamePlaceHolder.getText().toString(), placePlaceHolder.getText().toString(), date.getText().toString(), time.getText().toString(), Integer.parseInt(numberOfParticipants.getText().toString()), descriptionPlaceHolder.getText().toString(), nameOfUser);
-                            transportationEvents.child(event.getTitle()).setValue(event);
-                            transportationEvents.child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
-                            transportationEvents.child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
-                            userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
+                            transportationEvents.push().setValue(event);
+
                             break;
                         case "Game":
                             event = new GameEvent(eventNamePlaceHolder.getText().toString(), placePlaceHolder.getText().toString(), date.getText().toString(), time.getText().toString(), Integer.parseInt(numberOfParticipants.getText().toString()), descriptionPlaceHolder.getText().toString(), nameOfUser);
-                            gameEvents.child(event.getTitle()).setValue(event);
-                            gameEvents.child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
-                            gameEvents.child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
-                            userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
+                            gameEvents.push().setValue(event);
+
                             break;
                         case "Group Work":
                             event = new GroupWorkEvent(eventNamePlaceHolder.getText().toString(), placePlaceHolder.getText().toString(), date.getText().toString(), time.getText().toString(), Integer.parseInt(numberOfParticipants.getText().toString()), descriptionPlaceHolder.getText().toString(), nameOfUser);
-                            groupWorkEvents.child(event.getTitle()).setValue(event);
-                            groupWorkEvents.child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
-                            groupWorkEvents.child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
-                            userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
+                            groupWorkEvents.push().setValue(event);
                             break;
                         case "Meal":
                             event = new MealEvent(eventNamePlaceHolder.getText().toString(), placePlaceHolder.getText().toString(), date.getText().toString(), time.getText().toString(), Integer.parseInt(numberOfParticipants.getText().toString()), descriptionPlaceHolder.getText().toString(), nameOfUser);
-                            mealEvents.child(event.getTitle()).setValue(event);
-                            mealEvents.child(event.getTitle()).child("user_list").push().setValue(new User(email).getEmail());
-                            mealEvents.child(event.getTitle()).child("rateOfParticipants").setValue(event.getRateOfParticipants());
-                            userRef.child(dummyUser.getName()).child("created_events").push().setValue(event);
+                            mealEvents.push().setValue(event);
                             break;
                     }
+
+                    userRef.child(nameOfUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            User theUser = dataSnapshot.getValue(User.class);
+                            theUser.getCreated_events().add( event);
+                            userRef.child(nameOfUser).setValue( theUser);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                     ((MainActivity)getActivity()).getmViewPager().setCurrentItem(1);
                     Toast.makeText(getActivity(), "Event Created, Now GETOUT!", Toast.LENGTH_SHORT).show();
                     eventNamePlaceHolder.setText("");
