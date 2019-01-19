@@ -1,9 +1,9 @@
 # GetOutGrup number and name :Group_9 : Plato++
 
-Muhammed Naci Dalkiran
-Tolga Catalpinar 
-Caglar Cankaya
-Ali Taha Dincer
+Muhammed Naci Dalkiran,
+Tolga Catalpinar, 
+Caglar Cankaya,
+Ali Taha Dincer,
 Sena Korkut
 
 GetOut
