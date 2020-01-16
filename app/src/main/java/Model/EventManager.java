@@ -232,7 +232,7 @@ public class EventManager {
                 event.getUser_list().remove( i);
         }
 
-        event.setNumberOfCurrentParticipants(event.getUser_list().size());
+        event.setNumberOfCurrentParticipants(event.getNumberOfCurrentParticipants() - 1);
         event.setRateOfParticipants();
 
         // Update event
