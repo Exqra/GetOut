@@ -90,6 +90,9 @@ public class SeeEventsAdapter extends RecyclerView.Adapter<SeeEventsAdapter.SeeE
             int position = getAdapterPosition();
             Event events = eventsLists.get(position);
             Intent intent = new Intent(context,DetailsActivity.class);
+            // Added by Tolga at 16.01.2020
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //
             intent.putExtra("title",events.getTitle());
             intent.putExtra("hour",events.getDeadline());
             intent.putExtra("description",events.getDescription());
