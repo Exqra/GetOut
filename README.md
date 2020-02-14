@@ -20,16 +20,16 @@ they can attend these events that have specific time-duration and place.
 
 # Main Screen
 
-<img src="Screenshots/MainScreen.jpg" width="100">
+<img src="Screenshots/MainScreen.jpg" width="200">
 
 # Event Categories
-<img src="Screenshots/Categories.jpg" width="100">
+<img src="Screenshots/Categories.jpg" width="200">
 
 # Creating An Event
-<img src="Screenshots/CreateEvent.jpg" width="100">
+<img src="Screenshots/CreateEvent.jpg" width="200">
 
 # Profile of Users
-<img src="Screenshots/Profile1.jpg" width="100">
-<img src="Screenshots/Profile2.jpg" width="100">
-<img src="Screenshots/Profile3.jpg" width="100">
+<img src="Screenshots/Profile1.jpg" width="200">
+<img src="Screenshots/Profile2.jpg" width="200">
+<img src="Screenshots/Profile3.jpg" width="200">
 
