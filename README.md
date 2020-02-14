@@ -19,15 +19,17 @@ they can attend these events that have specific time-duration and place.
 # Screenshots
 
 # Main Screen
-![MainScreen](Screenshots/MainScreen.jpg)
+
+<img src="Screenshots/MainScreen.jpg" width="100">
+
 # Event Categories
-![Categories](Screenshots/Categories.jpg)
+<img src="Screenshots/Categories.jpg" width="100">
+
 # Creating An Event
-![CreateEvent](Screenshots/CreateEvent.jpg)
+<img src="Screenshots/CreateEvent.jpg" width="100">
 
 # Profile of Users
-![Profile1](Screenshots/Profile1.jpg)
-![Profile2](Screenshots/Profile2.jpg)
-![Profile3](Screenshots/Profile3.jpg)
-
+<img src="Screenshots/Profile1.jpg" width="100">
+<img src="Screenshots/Profile2.jpg" width="100">
+<img src="Screenshots/Profile3.jpg" width="100">
 
